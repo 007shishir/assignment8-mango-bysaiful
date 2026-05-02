@@ -41,12 +41,6 @@ export default function LoginPage() {
             variant="bordered"
             labelPlacement="outside"
           />
-          
-          <div className="flex justify-end px-1">
-            <Link color="primary" href="#" size="sm">
-              Forgot password?
-            </Link>
-          </div>
 
           <Button color="primary" className="font-bold" type="submit" fullWidth>
             Log In

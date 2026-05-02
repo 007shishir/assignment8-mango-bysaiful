@@ -91,7 +91,8 @@ const Navbar = ({ user=null, handleLogout, className, maxWidth = "lg", position 
               </Button>
             </div>
           ) : (
-            <Button 
+            <Link href="/login" color="primary" variant="solid" size="sm">
+             <Button 
               as={Link} 
               href="/login" 
               color="primary" 
@@ -99,6 +100,8 @@ const Navbar = ({ user=null, handleLogout, className, maxWidth = "lg", position 
             >
               Login
             </Button>
+            </Link>
+            
           )}
         </div>
       </header>

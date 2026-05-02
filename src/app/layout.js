@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Assignment 8 - Mango by Saiful",
-  description: "A Next.js 13 app with Tailwind CSS and DaisyUI, featuring a responsive Navbar and user authentication.",
+  description:
+    "A Next.js 13 app with Tailwind CSS and DaisyUI, featuring a responsive Navbar and user authentication.",
 };
 
 export default function RootLayout({ children }) {
@@ -24,9 +26,10 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar/>
+        <Navbar />
         {children}
-        </body>
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -1,4 +1,5 @@
 import Banner from "@/components/home/Banner";
+import FeaturedBooks from "@/components/home/FeaturedBooks";
 import MarqueeBooks from "@/components/home/MarqueeBooks";
 import Marquee from "@/components/home/MarqueeBooks";
 import Image from "next/image";
@@ -122,6 +123,7 @@ const bookData = [
       <main className="flex flex-1 w-full max-w-7xl flex-col items-center justify-between px-16 bg-white dark:bg-black sm:items-start">
         <Banner/>
         <MarqueeBooks books={bookData} className="mx-auto w-full" />
+        <FeaturedBooks books={bookData} />
       </main>
     </div>
   );

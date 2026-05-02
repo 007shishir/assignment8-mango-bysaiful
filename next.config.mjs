@@ -7,6 +7,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com', // Change this to match your image source
       },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+        port: '',
+        pathname: '/api/**',
+      },
     ],
   },
 };

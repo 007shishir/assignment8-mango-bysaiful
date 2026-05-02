@@ -2,6 +2,7 @@ import Banner from "@/components/home/Banner";
 import FeaturedBooks from "@/components/home/FeaturedBooks";
 import MarqueeBooks from "@/components/home/MarqueeBooks";
 import Marquee from "@/components/home/MarqueeBooks";
+import UserReview from "@/components/home/UserReview";
 import Image from "next/image";
 
 export default function Home() {
@@ -118,12 +119,24 @@ const bookData = [
   }
 ];
 
+const reviews = [
+  { id: 1, name: "Tanvir", rating: 5, comment: "Incredible selection!", bookTitle: "Atomic Habits" },
+  { id: 2, name: "Sara", rating: 4, comment: "Fast delivery, great quality.", bookTitle: "The Alchemist" },
+  { id: 3, name: "Ahmed", rating: 5, comment: "Excellent service!", bookTitle: "The Silent Patient" },
+  { id: 4, name: "Fatima", rating: 4, comment: "Good variety of books.", bookTitle: "Project Hail Mary" },
+];
+
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-1 w-full max-w-7xl flex-col items-center justify-between px-16 bg-white dark:bg-black sm:items-start">
         <Banner/>
         <MarqueeBooks books={bookData} className="mx-auto w-full" />
         <FeaturedBooks books={bookData} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+          {reviews.map((item) => (
+            <UserReview key={item.id} review={item} />
+          ))}
+        </div>
       </main>
     </div>
   );

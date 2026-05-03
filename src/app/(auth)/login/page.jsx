@@ -1,15 +1,26 @@
 "use client";
 
 import React from "react";
-// Change Divider to Separator
 import { Card, Input, Button, Link, Separator } from "@heroui/react";
 import { Icon } from "@iconify/react"; // Optional: for the Google icon
+import { useForm } from "react-hook-form";
 
 export default function LoginPage() {
   const handleGoogleLogin = () => {
     // Integrate your preferred auth library here (e.g., NextAuth or Firebase)
     console.log("Authenticating with Google...");
-    // window.location.href = "/"; 
+    // window.location.href = "/";
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const handleLoginForm = (data) => {
+    console.log("Logging in with:", data);
+    // Implement your login logic here (e.g., API call to your backend)
   };
 
   return (
@@ -24,25 +35,37 @@ export default function LoginPage() {
         </div>
 
         {/* Credentials Form */}
-        <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(handleLoginForm)}
+        >
           <Input
             required
             label="Email"
             placeholder="Enter your email"
             type="email"
             variant="bordered"
-            labelplacement="outside"
+            {...register("email", { required: "Email is required" })}
           />
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+          )}
+
           <Input
             required
             label="Password"
             placeholder="Enter your password"
             type="password"
             variant="bordered"
-            labelplacement="outside"
+            {...register("password", { required: "Password is required" })}
           />
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
 
-          <Button color="primary" className="font-bold" type="submit" fullWidth>
+          <Button color="primary" type="submit" className="font-bold" fullWidth>
             Log In
           </Button>
         </form>

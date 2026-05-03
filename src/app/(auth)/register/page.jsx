@@ -4,50 +4,35 @@ import React, { useState } from "react";
 import { Card, Input, Button, Link, Separator } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
 export default function RegisterPage() {
-  const router = useRouter();
+
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
-
-    try {
-      // Replace this with your actual API call
-      console.log("Registering user:", data);
-      
-      // Simulate success
-      const success = true; 
-      
-      if (success) {
-        router.push("/login");
-      } else {
-        throw new Error("Registration failed. Please try again.");
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleRegister = (data) => {
+    console.log("Registering user:", data);
   };
 
   const handleGoogleLogin = () => {
     console.log("Authenticating with Google...");
     // Logic to authenticate and then:
-    // router.push("/"); 
+    // router.push("/");
   };
 
   return (
     <div className="flex items-center justify-center bg-zinc-50 px-6 py-12 dark:bg-black">
       <Card className="w-full max-w-md p-8 shadow-lg border-none">
         <div className="flex flex-col gap-2 pb-6 text-center">
-          <h1 className="text-2xl font-bold text-default-900">Create an Account</h1>
+          <h1 className="text-2xl font-bold text-default-900">
+            Create an Account
+          </h1>
           <p className="text-small text-default-500">Join MangoBooks today</p>
         </div>
 
@@ -58,31 +43,36 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <form className="flex flex-col gap-4" onSubmit={handleRegister}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(handleRegister)}
+        >
           <Input
-            required
             name="name"
             label="Full Name"
             placeholder="Enter your name"
-            variant="bordered"
-            labelplacement="outside"
+            {...register("name", { required: "Name is required" })}
           />
+          {errors.name && (
+            <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+          )}
+
           <Input
-            required
             name="email"
             label="Email"
             placeholder="Enter your email"
             type="email"
-            variant="bordered"
-            labelplacement="outside"
+            {...register("email", { required: "Email is required" })}
           />
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+          )}
           <Input
             name="photoUrl"
             label="Photo URL"
             placeholder="https://example.com/photo.jpg"
             type="url"
-            variant="bordered"
-            labelplacement="outside"
+            {...register("photoUrl")}
           />
           <Input
             required
@@ -90,16 +80,19 @@ export default function RegisterPage() {
             label="Password"
             placeholder="Create a password"
             type="password"
-            variant="bordered"
-            labelplacement="outside"
+            {...register("password", { required: "Password is required" })}
           />
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
 
-          <Button 
-            color="primary" 
-            className="mt-2 font-bold" 
-            type="submit" 
-            isLoading={isLoading}
+          <Button
+            color="primary"
+            className="mt-2 font-bold"
             fullWidth
+            type="submit"
           >
             Register
           </Button>

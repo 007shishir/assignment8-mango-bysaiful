@@ -7,10 +7,10 @@ import { useForm } from "react-hook-form";
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
-  const handleGoogleLogin = () => {
-    // Integrate your preferred auth library here (e.g., NextAuth or Firebase)
-    console.log("Authenticating with Google...");
-    // window.location.href = "/";
+  const handleGoogleLogin = async () => {
+    const data = await authClient.signIn.social({
+      provider: "google",
+    });
   };
 
   const {
@@ -94,7 +94,7 @@ export default function LoginPage() {
             startContent={<Icon icon="flat-color-icons:google" width={20} />}
             className="border-default-200"
           >
-            Continue with Google
+            Sign in with Google
           </Button>
         </div>
 

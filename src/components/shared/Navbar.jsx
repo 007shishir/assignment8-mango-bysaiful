@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Link, Button } from "@heroui/react";
 import { cn } from "@/lib/utils"; // Ensure this utility exists in your project
+import { authClient } from "@/lib/auth-client";
 
 const maxWidthClasses = {
   sm: "max-w-[640px]",
@@ -12,7 +13,12 @@ const maxWidthClasses = {
   full: "max-w-full",
 };
 
-const Navbar = ({ user=null, handleLogout, className, maxWidth = "lg", position = "sticky" }) => {
+const Navbar = ({ className, maxWidth = "lg", position = "sticky" }) => {
+
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
+  console.log("Session data in Navbar:", user);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Your Navigation Links
@@ -76,13 +82,17 @@ const Navbar = ({ user=null, handleLogout, className, maxWidth = "lg", position 
 
         {/* Right: Conditional Rendering (Login/User Info) */}
         <div className="hidden items-center gap-4 md:flex">
-          {user ? (
+          {isPending? (
+            <span className="text-sm font-semibold text-default-700">
+              Loading...
+            </span>
+          ) : user ? (
             <div className="flex items-center gap-4">
               <span className="text-sm font-semibold text-default-700">
-                {user.name}
+                Hi, {user.name}
               </span>
               <Button 
-                onPress={handleLogout} 
+                onPress={async () => await authClient.signOut()} 
                 color="danger" 
                 variant="flat" 
                 size="sm"
@@ -126,7 +136,7 @@ const Navbar = ({ user=null, handleLogout, className, maxWidth = "lg", position 
               {user ? (
                 <div className="flex flex-col gap-3">
                   <p className="text-sm text-default-500 font-medium">Logged in as: {user.name}</p>
-                  <Button onPress={handleLogout} color="danger" variant="flat" fullWidth>
+                  <Button onPress={async () => await authClient.signOut()} color="danger" variant="flat" fullWidth>
                     Logout
                   </Button>
                 </div>

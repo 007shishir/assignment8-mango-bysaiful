@@ -1,5 +1,6 @@
 import Banner from "@/components/home/Banner";
 import FeaturedBooks from "@/components/home/FeaturedBooks";
+import HomeStats from "@/components/home/HomeStats";
 import MarqueeBooks from "@/components/home/MarqueeBooks";
 import Marquee from "@/components/home/MarqueeBooks";
 import UserReview from "@/components/home/UserReview";
@@ -137,6 +138,7 @@ const reviews = [
             <UserReview key={item.id} review={item} />
           ))}
         </div>
+        <HomeStats className="w-full mx-auto" />
       </main>
     </div>
   );

@@ -5,9 +5,9 @@ import { Card, Input, Button, Link, Separator } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { authClient } from "@/lib/auth-client";
 
 export default function RegisterPage() {
-
   const [error, setError] = useState("");
 
   const {
@@ -16,8 +16,26 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm();
 
-  const handleRegister = (data) => {
+  const handleRegister = async (data) => {
     console.log("Registering user:", data);
+    const { name, email, password, photoUrl } = data;
+
+    const { data: res, error } = await authClient.signUp.email({
+      name: name,
+      email: email,
+      password: password,
+      image: photoUrl,
+      callbackURL: "/login",
+    });
+
+    console.log("Sign-up response:", res, "Error:", error);
+    if (error) {
+      alert("Registration failed: " + error.message);
+    };
+
+    if (res) {
+      alert("Registration successful! ");
+    };
   };
 
   const handleGoogleLogin = () => {

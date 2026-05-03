@@ -13,6 +13,12 @@ const nextConfig = {
         port: '',
         pathname: '/api/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'svgrepo.com',
+        port: '',
+        pathname: '/api/**',
+      },
     ],
   },
 };

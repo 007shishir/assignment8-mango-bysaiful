@@ -4,6 +4,7 @@ import React from "react";
 import { Card, Input, Button, Link, Separator } from "@heroui/react";
 import { Icon } from "@iconify/react"; // Optional: for the Google icon
 import { useForm } from "react-hook-form";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const handleGoogleLogin = () => {
@@ -18,9 +19,16 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm();
 
-  const handleLoginForm = (data) => {
+  const handleLoginForm = async (data) => {
     console.log("Logging in with:", data);
     // Implement your login logic here (e.g., API call to your backend)
+
+    const { data: res, error } = await authClient.signIn.email({
+      email: data.email,
+      password: data.password, // required
+      rememberMe: true,
+      callbackURL: "/",
+    });
   };
 
   return (

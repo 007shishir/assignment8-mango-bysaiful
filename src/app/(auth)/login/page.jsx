@@ -26,20 +26,20 @@ export default function LoginPage() {
         {/* Credentials Form */}
         <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
           <Input
-            isRequired
+            required
             label="Email"
             placeholder="Enter your email"
             type="email"
             variant="bordered"
-            labelPlacement="outside"
+            labelplacement="outside"
           />
           <Input
-            isRequired
+            required
             label="Password"
             placeholder="Enter your password"
             type="password"
             variant="bordered"
-            labelPlacement="outside"
+            labelplacement="outside"
           />
 
           <Button color="primary" className="font-bold" type="submit" fullWidth>

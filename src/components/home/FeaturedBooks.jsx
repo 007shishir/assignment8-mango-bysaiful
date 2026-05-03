@@ -16,8 +16,10 @@ const FeaturedBooks = ({ books = [] }) => {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {featuredList.map((book) => (
-            <Card key={book.id} className="border-none bg-default-50 overflow-hidden shadow-md">
-              
+            <Card
+              key={book.id}
+              className="border-none bg-default-50 overflow-hidden shadow-md"
+            >
               {/* Image Container with fixed height */}
               <div className="relative h-[350px] w-full">
                 <Image
@@ -28,7 +30,7 @@ const FeaturedBooks = ({ books = [] }) => {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   priority={book.id <= 4} // Optional: helps with LCP performance
                 />
-                
+
                 {book.new && (
                   <Chip
                     color="warning"
@@ -50,21 +52,23 @@ const FeaturedBooks = ({ books = [] }) => {
                     {book.author}
                   </p>
                 </div>
-                
+
                 <p className="text-sm text-default-600 line-clamp-2 min-h-[40px]">
                   {book.description}
                 </p>
 
-                <Button
-                  as={Link}
-                  href={`/books/${book.id}`}
-                  fullWidth
-                  color="primary"
-                  variant="solid"
-                  className="mt-2 font-medium"
+                <Link
+                  href={`/all-books/${book.id}`}
                 >
-                  View Details
-                </Button>
+                  <Button
+                    fullWidth
+                    color="primary"
+                    variant="solid"
+                    className="mt-2 font-medium"
+                  >
+                    View Details
+                  </Button>
+                </Link>
               </div>
             </Card>
           ))}

@@ -5,8 +5,9 @@ import { Button, Card, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
   import { ToastContainer, toast } from 'react-toastify';
+import { authClient } from "@/lib/auth-client";
 
 const bookData = [
   {
@@ -120,9 +121,17 @@ const bookData = [
     featured: true
   }
 ];
+const getSession = async () => {
+  const { data: session } = await authClient.getSession();
+  return session;
+}
 
 export default function BookDetails() {
+
+
+
   const { bookId } = useParams();
+  const router = useRouter();
   
   // Find the book based on the ID in the URL
   const book = bookData.find((b) => b.id === parseInt(bookId));
@@ -136,10 +145,18 @@ export default function BookDetails() {
     );
   }
 
-  const handleBorrow = () => toast.success(`You have borrowed "${book.title}"!`, {
-    position: "top-right",
-    autoClose: 3000
-  });
+  const handleBorrow = async () => {
+    const session = await getSession();
+
+    if (session) {
+      toast.success(`You have borrowed "${book.title}"!`, {
+        position: "top-right",
+        autoClose: 3000
+      });
+    } else {
+      router.push('/login');
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">

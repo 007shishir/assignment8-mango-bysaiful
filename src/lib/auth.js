@@ -13,6 +13,11 @@ export const auth = betterAuth({
     // Optional: if you don't provide a client, database transactions won't be enabled.
     client,
   }),
+  // ADD THIS SECTION:
+  trustedOrigins: [
+    "https://assignment8-mango-bysaiful.vercel.app", // Your frontend URL
+    "http://localhost:3000" // For local testing
+  ],
   emailAndPassword: {
     enabled: true,
   },

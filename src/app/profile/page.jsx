@@ -1,26 +1,115 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Card, 
   Avatar, 
   Button, 
   Separator, 
-  Chip
+  Chip,
+  Input,
+  Spinner
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState("profile");
+  const router = useRouter();
 
-  // User data for Md. Saiful Islam
-  const user = {
-    name: "Md. Saiful Islam",
-    email: "saiful@example.com", // Placeholder email
-    image: "https://ui-avatars.com/api/?name=Saiful+Islam&background=f97316&color=fff",
-    role: "Reader",
-    joinedDate: "May 2026", // Current date context
+  const { data: session, isPending } = authClient.useSession();
+
+  const [newName, setNewName] = useState("");
+  const [newImage, setNewImage] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [isUpdatingEmail, setIsUpdatingEmail] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
+  useEffect(() => {
+    if (session?.user) {
+      setNewName(session.user.name || "");
+      setNewImage(session.user.image || "");
+      setNewEmail(session.user.email || "");
+    }
+  }, [session]);
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    router.push("/");
   };
+
+  const handleUpdateProfile = async () => {
+    setIsUpdatingProfile(true);
+    try {
+      const { data, error } = await authClient.updateUser({
+        name: newName,
+        image: newImage,
+      });
+      if (error) {
+        toast.error(error.message || "Failed to update profile");
+      } else {
+        toast.success("Profile updated successfully!");
+      }
+    } catch (err) {
+      toast.error("An error occurred.");
+    }
+    setIsUpdatingProfile(false);
+  };
+
+  const handleUpdateEmail = async () => {
+    setIsUpdatingEmail(true);
+    try {
+      const { data, error } = await authClient.changeEmail({
+        newEmail: newEmail,
+      });
+      if (error) {
+        toast.error(error.message || "Failed to update email");
+      } else {
+        toast.success("Email update requested! Please check your email.");
+      }
+    } catch (err) {
+      toast.error("An error occurred.");
+    }
+    setIsUpdatingEmail(false);
+  };
+
+  const handleUpdatePassword = async () => {
+    setIsUpdatingPassword(true);
+    try {
+      const { data, error } = await authClient.changePassword({
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+        revokeOtherSessions: true,
+      });
+      if (error) {
+        toast.error(error.message || "Failed to update password");
+      } else {
+        toast.success("Password updated successfully!");
+        setCurrentPassword("");
+        setNewPassword("");
+      }
+    } catch (err) {
+      toast.error("An error occurred.");
+    }
+    setIsUpdatingPassword(false);
+  };
+
+  if (isPending) {
+    return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  }
+
+  if (!session?.user) {
+    return <div className="text-center py-20">Please log in to view this page.</div>;
+  }
+
+  const user = session.user;
 
   const navItems = [
     { key: "profile", label: "My Profile", icon: "solar:user-circle-bold" },
@@ -30,6 +119,7 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto max-w-5xl px-6 py-12">
+      <ToastContainer />
       <div className="flex flex-col md:flex-row gap-8">
         
         {/* Left Navigation Column */}
@@ -66,6 +156,7 @@ export default function ProfilePage() {
             color="danger" 
             className="justify-start font-semibold"
             startContent={<Icon icon="solar:logout-3-bold" width={20} />}
+            onClick={handleLogout}
           >
             Logout
           </Button>
@@ -90,12 +181,14 @@ export default function ProfilePage() {
                   <div className="flex flex-col gap-1 p-4 bg-default-50 rounded-xl">
                     <span className="text-tiny text-default-400 uppercase font-bold">Account Role</span>
                     <div className="mt-1">
-                      <Chip color="primary" size="sm" variant="flat">{user.role}</Chip>
+                      <Chip color="primary" size="sm" variant="flat">{user.role || "User"}</Chip>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1 p-4 bg-default-50 rounded-xl">
                     <span className="text-tiny text-default-400 uppercase font-bold">Member Since</span>
-                    <span className="text-medium">{user.joinedDate}</span>
+                    <span className="text-medium">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -113,22 +206,104 @@ export default function ProfilePage() {
             {activeSection === "settings" && (
               <div className="animate-in fade-in duration-400">
                 <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
+                <div className="space-y-8">
+                  
+                  {/* Profile Form */}
+                  <div className="space-y-4">
                     <div>
-                      <p className="font-semibold">Password</p>
+                      <h3 className="text-lg font-semibold">Update Profile</h3>
+                      <p className="text-small text-default-400">Change your public profile details</p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Input
+                        label="Full Name"
+                        placeholder="Enter your name"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        variant="bordered"
+                      />
+                      <Input
+                        label="Profile Image URL"
+                        placeholder="Enter image URL"
+                        value={newImage}
+                        onChange={(e) => setNewImage(e.target.value)}
+                        variant="bordered"
+                      />
+                      <Button 
+                        color="primary" 
+                        isLoading={isUpdatingProfile}
+                        onClick={handleUpdateProfile}
+                        className="w-fit"
+                      >
+                        Save Profile
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Email Form */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">Change Email</h3>
+                      <p className="text-small text-default-400">Update your email address</p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Input
+                        label="New Email Address"
+                        type="email"
+                        placeholder="Enter new email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        variant="bordered"
+                      />
+                      <Button 
+                        color="secondary" 
+                        isLoading={isUpdatingEmail}
+                        onClick={handleUpdateEmail}
+                        className="w-fit"
+                      >
+                        Update Email
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Password Form */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">Change Password</h3>
                       <p className="text-small text-default-400">Update your security credentials</p>
                     </div>
-                    <Button variant="flat" size="sm">Update</Button>
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-danger">Delete Account</p>
-                      <p className="text-small text-default-400">Permanently close your account</p>
+                    <div className="flex flex-col gap-3">
+                      <Input
+                        label="Current Password"
+                        type="password"
+                        placeholder="Enter current password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        variant="bordered"
+                      />
+                      <Input
+                        label="New Password"
+                        type="password"
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        variant="bordered"
+                      />
+                      <Button 
+                        color="warning" 
+                        isLoading={isUpdatingPassword}
+                        onClick={handleUpdatePassword}
+                        className="w-fit text-white"
+                      >
+                        Update Password
+                      </Button>
                     </div>
-                    <Button color="danger" variant="light" size="sm">Delete</Button>
                   </div>
+
                 </div>
               </div>
             )}
